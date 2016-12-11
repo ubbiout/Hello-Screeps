@@ -1,9 +1,10 @@
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+//var roleSpawner = require('role.spawner')
 
 module.exports.loop = function () {
-
+  
     var tower = Game.getObjectById('TOWER_ID');
     if(tower) {
         var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -19,16 +20,42 @@ module.exports.loop = function () {
         }
     }
 
+    var cHarvest = 0;
+    var cUpgrade = 0;
+    var cBuild = 0;
+
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
+            cHarvest++;
         }
         if(creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);
+            cUpgrade++;
         }
         if(creep.memory.role == 'builder') {
             roleBuilder.run(creep);
+            cBuild++;
         }
+    }
+    
+    if(cHarvest == 0) {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE], null, {role: 'harvester'});
+    }
+    if(cUpgrade == 0) {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE], null, {role: 'upgrader'});
+    }
+    if(cBuild == 0) {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE], null, {role: 'builder'});
+    }
+    if(cBuild < 3) {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE, MOVE], null, {role: 'builder'});
+    }
+    if(cUpgrade < 3) {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE, MOVE], null, {role: 'upgrader'});
+    }
+    else {
+        Game.spawns.Spawn1.createCreep([WORK, CARRY, MOVE, MOVE], null, {role: 'harvester'});
     }
 }

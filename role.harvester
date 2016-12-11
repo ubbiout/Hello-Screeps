@@ -17,7 +17,11 @@ var roleHarvester = {
                     }
             });
             if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                creep.say('tried');
+                if(creep.pos.inRangeTo(targets[0],1)) {
+                    creep.transfer(targets[0], RESOURCE_ENERGY);
+                }
+                else {
                     creep.moveTo(targets[0]);
                 }
             }
